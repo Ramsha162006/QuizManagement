@@ -54,6 +54,48 @@
 
         </section>
 
+        <!-- AI Quiz Generator -->
+<button type="button" id="ai-generator-btn">
+    ✨ AI Quiz Generator
+</button>
+
+<div id="ai-generator-section" style="display: none;">
+
+    <h2>✨ Generate Quiz with AI</h2>
+
+    <form id="ai-quiz-form">
+
+        <label for="ai-topic">Topic</label>
+        <input
+            type="text"
+            id="ai-topic"
+            placeholder="e.g. C++, JavaScript, DBMS"
+            required
+        >
+
+        <label for="ai-count">Number of Questions</label>
+        <select id="ai-count">
+            <option value="5">5</option>
+            <option value="10">10</option>
+        </select>
+
+        <label for="ai-difficulty">Difficulty</label>
+        <select id="ai-difficulty">
+            <option value="Easy">Easy</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+
+        <button type="submit" id="generate-ai-btn">
+            Generate Quiz
+        </button>
+
+    </form>
+
+    <p id="ai-message"></p>
+
+</div>
+
 
         <!-- ALL QUESTIONS -->
 

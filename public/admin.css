@@ -218,3 +218,59 @@ hr {
         padding: 15px;
     }
 }
+/* AI Quiz Generator */
+
+#ai-generator-btn {
+    margin-top: 15px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 9px;
+    background: #7c3aed;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#ai-generator-btn:hover {
+    background: #6d28d9;
+}
+
+#ai-generator-section {
+    margin-top: 25px;
+    padding: 25px;
+    background: #faf5ff;
+    border: 1px solid #e9d5ff;
+    border-radius: 14px;
+}
+
+#ai-generator-section h2 {
+    margin-top: 0;
+}
+
+#generate-ai-btn {
+    margin-top: 10px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #7c3aed;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#generate-ai-btn:hover {
+    background: #6d28d9;
+}
+
+#generate-ai-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#ai-message {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+}

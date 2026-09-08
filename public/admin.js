@@ -208,3 +208,81 @@ editForm.addEventListener("submit", function(event) {
     });
 
 });
+
+const aiQuizForm = document.querySelector("#ai-quiz-form");
+const aiMessage = document.querySelector("#ai-message");
+const generateAiBtn = document.querySelector("#generate-ai-btn");
+const aiGeneratorBtn = document.querySelector("#ai-generator-btn");
+const aiGeneratorSection = document.querySelector("#ai-generator-section");
+// Show / hide AI generator
+aiGeneratorBtn.addEventListener("click", function () {
+
+    if (aiGeneratorSection.style.display === "none") {
+        aiGeneratorSection.style.display = "block";
+    } else {
+        aiGeneratorSection.style.display = "none";
+    }
+
+});
+
+
+// Generate quiz
+aiQuizForm.addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const topic = document.querySelector("#ai-topic").value.trim();
+    const count = Number(document.querySelector("#ai-count").value);
+    const difficulty = document.querySelector("#ai-difficulty").value;
+
+    generateAiBtn.disabled = true;
+    generateAiBtn.textContent = "Generating...";
+    aiMessage.textContent = "🤖 AI is generating your questions...";
+
+    try {
+
+        const response = await fetch("/generate-quiz", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                topic: topic,
+                count: count,
+                difficulty: difficulty
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to generate quiz");
+        }
+
+        aiMessage.textContent =
+            `✅ ${data.inserted} questions generated and saved!`;
+
+        aiQuizForm.reset();
+
+        // Refresh the question list
+        loadQuestions();
+
+    } catch (error) {
+
+        console.error("AI Quiz Error:", error);
+
+        aiMessage.textContent =
+            "❌ Failed to generate quiz: " + error.message;
+
+    } finally {
+
+        generateAiBtn.disabled = false;
+        generateAiBtn.textContent = "Generate Quiz";
+
+    }
+
+});
