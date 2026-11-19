@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql2");
+const db = require("./db");
 const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
@@ -11,15 +11,6 @@ const ai = new GoogleGenAI({
 
 app.use(express.json());
 app.use(express.static("public"));
-
-
-const db = mysql.createConnection({
-    host: process.env.DB_host,
-    user: process.env.DB_user,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
 db.connect((err) => {
     if (err) {
         console.log("MySQL connection failed:", err);
@@ -338,6 +329,8 @@ console.log(response.text);
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
+;
