@@ -20,9 +20,9 @@ db.connect((err) => {
     console.log("MySQL connected successfully!");
 });
 
-app.get("/", (req, res) => {
-    res.send("Quiz Management Server is running!");
-});
+//app.get("/", (req, res) => {
+//    res.send("Quiz Management Server is running!");
+//});
 
 app.get("/questions", (req, res) => {
     db.query("SELECT * FROM Questions", (err, results) => {
