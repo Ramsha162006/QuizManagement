@@ -113,7 +113,7 @@ This project is fully containerized using **Docker** and **Docker Compose**, all
 4. The server will start running on `http://localhost:3000`.
 
 ## 🌐 Live Demo
-Check out the live deployed application here: **[Quiz Management App Live]()**
+Check out the live deployed application here: **[Quiz Management App Live](https://quizmanagement-d45y.onrender.com)**
 *(Note: Hosted on Render Free Tier — initial load may take 30–40 seconds if the server is waking up from sleep).*
 
 
