@@ -25,7 +25,7 @@ db.connect((err) => {
 //});
 
 app.get("/questions", (req, res) => {
-    db.query("SELECT * FROM Questions", (err, results) => {
+    db.query("SELECT * FROM questions", (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Database error");
@@ -49,7 +49,7 @@ app.post("/questions", (req, res) => {
     } = req.body;
 
     const sql = `
-        INSERT INTO Questions
+        INSERT INTO questions
         (question_text, option_a, option_b, option_c, option_d, correct_option)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
@@ -80,7 +80,7 @@ app.get("/questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "SELECT * FROM Questions WHERE question_id = ?",
+        "SELECT * FROM questions WHERE question_id = ?",
         [id],
         (err, results) => {
             if (err) {
@@ -113,7 +113,7 @@ app.put("/questions/:id", (req, res) => {
     } = req.body;
 
     const sql = `
-        UPDATE Questions
+        UPDATE questions
         SET question_text = ?,
             option_a = ?,
             option_b = ?,
@@ -155,7 +155,7 @@ app.delete("/questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "DELETE FROM Questions WHERE question_id = ?",
+        "DELETE FROM questions WHERE question_id = ?",
         [id],
         (err, result) => {
             if (err) {
@@ -269,7 +269,7 @@ console.log(response.text);
 
         // Save every generated question into MySQL
         const sql = `
-            INSERT INTO Questions
+            INSERT INTO questions
             (question_text, option_a, option_b, option_c, option_d, correct_option)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
