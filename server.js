@@ -24,8 +24,8 @@ db.connect((err) => {
 //    res.send("Quiz Management Server is running!");
 //});
 
-app.get("/questions", (req, res) => {
-    db.query("SELECT * FROM questions", (err, results) => {
+app.get("/Questions", (req, res) => {
+    db.query("SELECT * FROM Questions", (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Database error");
@@ -38,7 +38,7 @@ app.get("/questions", (req, res) => {
 
 
 
-app.post("/questions", (req, res) => {
+app.post("/Questions", (req, res) => {
     const {
         question_text,
         option_a,
@@ -49,7 +49,7 @@ app.post("/questions", (req, res) => {
     } = req.body;
 
     const sql = `
-        INSERT INTO questions
+        INSERT INTO Questions
         (question_text, option_a, option_b, option_c, option_d, correct_option)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
@@ -76,11 +76,11 @@ app.post("/questions", (req, res) => {
     );
 });
 
-app.get("/questions/:id", (req, res) => {
+app.get("/Questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "SELECT * FROM questions WHERE question_id = ?",
+        "SELECT * FROM Questions WHERE question_id = ?",
         [id],
         (err, results) => {
             if (err) {
@@ -100,7 +100,7 @@ app.get("/questions/:id", (req, res) => {
 });
 
 
-app.put("/questions/:id", (req, res) => {
+app.put("/Questions/:id", (req, res) => {
     const id = req.params.id;
 
     const {
@@ -113,7 +113,7 @@ app.put("/questions/:id", (req, res) => {
     } = req.body;
 
     const sql = `
-        UPDATE questions
+        UPDATE Questions
         SET question_text = ?,
             option_a = ?,
             option_b = ?,
@@ -151,11 +151,11 @@ app.put("/questions/:id", (req, res) => {
     );
 });
 
-app.delete("/questions/:id", (req, res) => {
+app.delete("/Questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "DELETE FROM questions WHERE question_id = ?",
+        "DELETE FROM Questions WHERE question_id = ?",
         [id],
         (err, result) => {
             if (err) {
@@ -189,7 +189,7 @@ app.post("/generate-quiz", async (req, res) => {
         }
 
         const prompt = `
-Generate ${count} multiple-choice questions about "${topic}".
+Generate ${count} multiple-choice Questions about "${topic}".
 
 Difficulty: ${difficulty}
 
@@ -199,7 +199,7 @@ Do not include markdown or any explanation.
 The JSON must have this exact structure:
 
 {
-    "questions": [
+    "Questions": [
         {
             "question_text": "Question here",
             "option_a": "Option A",
@@ -213,11 +213,11 @@ The JSON must have this exact structure:
 
 Rules:
 - correct_option must be only A, B, C, or D.
-- Generate exactly ${count} questions.
+- Generate exactly ${count} Questions.
 - Every question must have four different options.
 `;
 
-        // Ask Gemini to generate the questions
+        // Ask Gemini to generate the Questions
         console.log("Sending request to Gemini...");
 
 let response;
@@ -261,7 +261,7 @@ console.log(response.text);
         // Convert Gemini response to JavaScript object
         const result = JSON.parse(response.text);
 
-        if (!result.questions || !Array.isArray(result.questions)) {
+        if (!result.Questions || !Array.isArray(result.Questions)) {
             return res.status(500).json({
                 error: "AI returned an invalid format"
             });
@@ -269,14 +269,14 @@ console.log(response.text);
 
         // Save every generated question into MySQL
         const sql = `
-            INSERT INTO questions
+            INSERT INTO Questions
             (question_text, option_a, option_b, option_c, option_d, correct_option)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
 
         let inserted = 0;
 
-        for (const q of result.questions) {
+        for (const q of result.Questions) {
 
             if (
                 !q.question_text ||
