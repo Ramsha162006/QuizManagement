@@ -1,6 +1,4 @@
 require("dotenv").config();
-const { setGlobalDispatcher, Agent } = require("undici");
-setGlobalDispatcher(new Agent({ headersTimeout: 60000, connectTimeout: 60000 }));
 
 const express = require("express");
 const db = require("./db");
