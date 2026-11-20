@@ -1,4 +1,7 @@
 require("dotenv").config();
+const { setGlobalDispatcher, Agent } = require("undici");
+setGlobalDispatcher(new Agent({ headersTimeout: 60000, connectTimeout: 60000 }));
+
 const express = require("express");
 const db = require("./db");
 const { GoogleGenAI } = require("@google/genai");
@@ -24,8 +27,8 @@ db.connect((err) => {
 //    res.send("Quiz Management Server is running!");
 //});
 
-app.get("/Questions", (req, res) => {
-    db.query("SELECT * FROM Questions", (err, results) => {
+app.get("/questions", (req, res) => {
+    db.query("SELECT * FROM questions", (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send("Database error");
@@ -38,7 +41,7 @@ app.get("/Questions", (req, res) => {
 
 
 
-app.post("/Questions", (req, res) => {
+app.post("/questions", (req, res) => {
     const {
         question_text,
         option_a,
@@ -49,7 +52,7 @@ app.post("/Questions", (req, res) => {
     } = req.body;
 
     const sql = `
-        INSERT INTO Questions
+        INSERT INTO questions
         (question_text, option_a, option_b, option_c, option_d, correct_option)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
@@ -76,11 +79,11 @@ app.post("/Questions", (req, res) => {
     );
 });
 
-app.get("/Questions/:id", (req, res) => {
+app.get("/questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "SELECT * FROM Questions WHERE question_id = ?",
+        "SELECT * FROM questions WHERE question_id = ?",
         [id],
         (err, results) => {
             if (err) {
@@ -100,7 +103,7 @@ app.get("/Questions/:id", (req, res) => {
 });
 
 
-app.put("/Questions/:id", (req, res) => {
+app.put("/questions/:id", (req, res) => {
     const id = req.params.id;
 
     const {
@@ -113,7 +116,7 @@ app.put("/Questions/:id", (req, res) => {
     } = req.body;
 
     const sql = `
-        UPDATE Questions
+        UPDATE questions
         SET question_text = ?,
             option_a = ?,
             option_b = ?,
@@ -151,11 +154,11 @@ app.put("/Questions/:id", (req, res) => {
     );
 });
 
-app.delete("/Questions/:id", (req, res) => {
+app.delete("/questions/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(
-        "DELETE FROM Questions WHERE question_id = ?",
+        "DELETE FROM questions WHERE question_id = ?",
         [id],
         (err, result) => {
             if (err) {
@@ -189,7 +192,7 @@ app.post("/generate-quiz", async (req, res) => {
         }
 
         const prompt = `
-Generate ${count} multiple-choice Questions about "${topic}".
+Generate ${count} multiple-choice questions about "${topic}".
 
 Difficulty: ${difficulty}
 
@@ -199,7 +202,7 @@ Do not include markdown or any explanation.
 The JSON must have this exact structure:
 
 {
-    "Questions": [
+    "questions": [
         {
             "question_text": "Question here",
             "option_a": "Option A",
@@ -213,11 +216,11 @@ The JSON must have this exact structure:
 
 Rules:
 - correct_option must be only A, B, C, or D.
-- Generate exactly ${count} Questions.
+- Generate exactly ${count} questions.
 - Every question must have four different options.
 `;
 
-        // Ask Gemini to generate the Questions
+        // Ask Gemini to generate the questions
         console.log("Sending request to Gemini...");
 
 let response;
@@ -229,7 +232,7 @@ for (let attempt = 1; attempt <= 3; attempt++) {
         console.log(`Gemini attempt ${attempt}/3...`);
 
         response = await ai.models.generateContent({
-            model: "gemini-3.7-flash",
+            model: "gemini-2.5-flash",
             contents: prompt,
             config: {
                 responseMimeType: "application/json"
@@ -261,7 +264,7 @@ console.log(response.text);
         // Convert Gemini response to JavaScript object
         const result = JSON.parse(response.text);
 
-        if (!result.Questions || !Array.isArray(result.Questions)) {
+        if (!result.questions || !Array.isArray(result.questions)) {
             return res.status(500).json({
                 error: "AI returned an invalid format"
             });
@@ -269,14 +272,14 @@ console.log(response.text);
 
         // Save every generated question into MySQL
         const sql = `
-            INSERT INTO Questions
+            INSERT INTO questions
             (question_text, option_a, option_b, option_c, option_d, correct_option)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
 
         let inserted = 0;
 
-        for (const q of result.Questions) {
+        for (const q of result.questions) {
 
             if (
                 !q.question_text ||
